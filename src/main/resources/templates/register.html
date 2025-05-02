@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - URL Shortener</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+            color: #fff;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .register-outer {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 7vh;
+        }
+        nav.navbar {
+            width: 100vw;
+            min-width: 100vw;
+            margin: 0;
+            padding: 0;
+            background: rgba(15,32,39,0.95) !important;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.12);
+        }
+        .vitekurl-logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(44,83,100,0.2);
+        }
+        .register-container {
+            max-width: 420px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .card {
+            background: rgba(25, 50, 70, 0.92);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px 0 rgba(31,38,135,0.13);
+            border: 1.5px solid rgba(56,239,125,0.10);
+        }
+        .card-footer {
+            background: transparent;
+            color: #b2ffec;
+        }
+        .form-label {
+            color: #b2ffec;
+            font-weight: 500;
+        }
+        .form-control {
+            border-radius: 12px;
+            border: none;
+            background: rgba(25, 50, 70, 0.92);
+            color: #e0f7fa;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            font-size: 1.1rem;
+            padding: 0.8rem 0.8rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .form-control:focus {
+            background: rgba(30, 60, 90, 0.98);
+            color: #fff;
+        }
+        .form-control::placeholder {
+            color: #b2c9d6;
+            opacity: 1;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            transition: background 0.2s, color 0.2s;
+            padding: 0.8rem 1.3rem;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%);
+            color: #222;
+        }
+        .alert {
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .navbar-brand {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff !important;
+            text-shadow: 0 2px 8px rgba(44,83,100,0.2);
+        }
+        .nav-link {
+            color: #b2ffec !important;
+        }
+        .nav-link.active, .nav-link:focus {
+            color: #38ef7d !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <span class="navbar-brand vitekurl-logo">vitekurl</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Вход</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/register">Регистрация</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="register-outer">
+        <div class="container py-4">
+            <div class="register-container">
+                <div class="text-center mb-4">
+                    <h1 class="h3" style="font-weight: 700; letter-spacing: 1px; color: #b2ffec;">Регистрация</h1>
+                    <p class="text-muted" style="color: #b2ffec !important;">Создайте аккаунт для управления своими короткими ссылками</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                        
+                        <form id="registerForm" th:action="@{/api/auth/register}" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Имя пользователя</label>
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Введите имя пользователя" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="Введите email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Пароль</label>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Введите пароль" required minlength="6">
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Повторите пароль</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Повторите пароль" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center py-3">
+                        <p class="mb-0">Уже есть аккаунт? <a href="/login" style="color: #38ef7d;">Войти</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registerForm');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Check if passwords match
+                if (password.value !== confirmPassword.value) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+                
+                // Submit the form via fetch API
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        email: document.getElementById('email').value,
+                        password: password.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to home page or login with JWT token
+                        localStorage.setItem('token', data.data.token);
+                        window.location.href = '/';
+                    } else {
+                        alert(data.message || 'Registration failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Registration failed: ' + error);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

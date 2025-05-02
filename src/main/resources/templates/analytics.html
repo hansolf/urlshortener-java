@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - URL Shortener</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+            color: #fff;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        nav.navbar {
+            width: 100vw;
+            min-width: 100vw;
+            margin: 0;
+            padding: 0;
+            background: rgba(15,32,39,0.95) !important;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.12);
+        }
+        .vitekurl-logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(44,83,100,0.2);
+        }
+        .container {
+            max-width: 1000px;
+        }
+        .card {
+            background: rgba(25, 50, 70, 0.92);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px 0 rgba(31,38,135,0.13);
+            margin-bottom: 20px;
+            border: 1.5px solid rgba(56,239,125,0.10);
+        }
+        .card-header {
+            background: transparent !important;
+            color: #b2ffec;
+            border-bottom: none;
+        }
+        .card-title, .card-header h5 {
+            color: #b2ffec;
+        }
+        .btn-primary, .btn-outline-secondary {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-primary:hover, .btn-outline-secondary:hover {
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%);
+            color: #222;
+        }
+        .btn-outline-secondary {
+            background: transparent;
+            color: #38ef7d;
+            border: 1.5px solid #38ef7d;
+        }
+        .btn-outline-secondary:hover {
+            background: #38ef7d;
+            color: #222;
+        }
+        .stats-card {
+            transition: transform 0.3s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+        .list-group-item {
+            background: transparent;
+            color: #e0f7fa;
+            border: none;
+        }
+        .badge.bg-primary {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%) !important;
+            color: #222 !important;
+        }
+        .nav-link {
+            color: #b2ffec !important;
+        }
+        .nav-link.active, .nav-link:focus {
+            color: #38ef7d !important;
+        }
+        .alert {
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .card-body p, .card-body span, .card-body a, .list-group-item {
+            color: #38ef7d !important;
+        }
+        .card-body strong {
+            color: #b2ffec !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <span class="navbar-brand vitekurl-logo">vitekurl</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                    <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link" href="/login">Вход</a></li>
+                    <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link" href="/register">Регистрация</a></li>
+                    <li sec:authorize="isAuthenticated()" class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link">Выйти</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3" style="font-weight: 700; letter-spacing: 1px; color: #b2ffec;">Аналитика по ссылке</h1>
+            <a href="/" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> К списку ссылок
+            </a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Информация о ссылке</h5>
+                <div class="row">
+                    <div class="col-md-9">
+                        <p class="mb-1"><strong>Оригинальная ссылка:</strong> 
+                            <a th:href="${analytics.originalUrl}" th:text="${analytics.originalUrl}" 
+                               target="_blank"></a>
+                        </p>
+                        <p class="mb-1"><strong>Короткая ссылка:</strong> 
+                            <a th:href="${analytics.shortUrl}" th:text="${analytics.shortUrl}" 
+                               target="_blank"></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Grafana iframe for this shortCode -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Переходы за день</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height:400px;">
+                    <iframe
+                      th:src="'http://localhost:3000/d-solo/url-shortener-demo/url-shortener-analytics?orgId=1&panelId=1&var-shortCode=' + ${analytics.shortCode}"
+                      width="100%" height="400" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Переходы по дням</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="clicksChart"></canvas>
+                            <div id="clicksChartFallback" style="display:none; text-align:center; color:#888;">Нет данных</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Страны</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${analytics.clicksByCountry.empty}">
+                            <p class="text-center text-muted my-3">Нет данных по странам</p>
+                        </div>
+                        <div th:unless="${analytics.clicksByCountry.empty}">
+                            <ul class="list-group list-group-flush">
+                                <li th:each="item : ${analytics.clicksByCountry}" 
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span th:with="countryCode=${item['country'] != null ? item['country'] : 'ZZ'}">
+                                        <span th:text="${T(com.urlshortener.util.UserAgentParser).getCountryName(countryCode)}"></span>
+                                    </span>
+                                    <span class="badge bg-primary rounded-pill" th:text="${item['count']}"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Браузеры</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${analytics.clicksByBrowser.empty}">
+                            <p class="text-center text-muted my-3">Нет данных по браузерам</p>
+                        </div>
+                        <div th:unless="${analytics.clicksByBrowser.empty}">
+                            <ul class="list-group list-group-flush">
+                                <li th:each="item : ${analytics.clicksByBrowser}" 
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span th:text="${item['browser'] != null ? item['browser'] : 'Неизвестно'}"></span>
+                                    <span class="badge bg-primary rounded-pill" th:text="${item['count']}"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Платформы</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${analytics.clicksByPlatform.empty}">
+                            <p class="text-center text-muted my-3">Нет данных по платформам</p>
+                        </div>
+                        <div th:unless="${analytics.clicksByPlatform.empty}">
+                            <ul class="list-group list-group-flush">
+                                <li th:each="item : ${analytics.clicksByPlatform}" 
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span th:text="${item['platform'] != null ? item['platform'] : 'Неизвестно'}"></span>
+                                    <span class="badge bg-primary rounded-pill" th:text="${item['count']}"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get data from Thymeleaf
+            const clicksPerDay = /*[[${analytics.clicksPerDay}]]*/ [];
+            const referrers = /*[[${analytics.clicksByReferrer}]]*/ [];
+            console.log('DEBUG clicksPerDay:', clicksPerDay);
+            // Prepare data for clicks over time chart
+            const dates = clicksPerDay.map(item => item.date);
+            const counts = clicksPerDay.map(item => item.count);
+            const ctxClicks = document.getElementById('clicksChart').getContext('2d');
+            if (dates.length > 0 && counts.some(c => c > 0)) {
+                new Chart(ctxClicks, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Clicks',
+                            data: counts,
+                            backgroundColor: 'rgba(59, 89, 152, 0.2)',
+                            borderColor: 'rgba(59, 89, 152, 1)',
+                            borderWidth: 2,
+                            tension: 0.1,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
+                        }
+                    }
+                });
+            } else {
+                document.getElementById('clicksChart').style.display = 'none';
+                document.getElementById('clicksChartFallback').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vitekurl - The Original URL Shortener</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+            color: #fff;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        }
+        .vitekurl-logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(44,83,100,0.2);
+        }
+        .main-card {
+            background: rgba(25, 50, 70, 0.92);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px 0 rgba(31,38,135,0.13);
+            padding: 2rem 1.2rem 1.2rem 1.2rem;
+            margin-top: 2.5rem;
+            margin-bottom: 2rem;
+            max-width: 900px;
+        }
+        .shorten-form .form-control {
+            border-radius: 12px 0 0 12px;
+            border: none;
+            font-size: 1.1rem;
+            padding: 0.8rem 0.8rem;
+            background: rgba(25, 50, 70, 0.92);
+            color: #e0f7fa;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            transition: background 0.2s, color 0.2s;
+        }
+        .shorten-form .form-control::placeholder {
+            color: #b2c9d6;
+            opacity: 1;
+        }
+        .shorten-form .form-control:focus {
+            background: rgba(30, 60, 90, 0.98);
+            color: #fff;
+        }
+        .shorten-form .btn-primary {
+            border-radius: 0 12px 12px 0;
+            font-size: 1.1rem;
+            padding: 0.8rem 1.3rem;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            transition: background 0.2s, color 0.2s;
+        }
+        .shorten-form .btn-primary:hover {
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%);
+            color: #222;
+        }
+        .short-url-box {
+            background: rgba(25, 50, 70, 0.92);
+            color: #e0f7fa;
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            margin-top: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            border: 1.5px solid rgba(56,239,125,0.10);
+        }
+        .short-url-box a {
+            color: #38ef7d;
+            font-weight: 600;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .short-url-box .copy-btn {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.5rem 1.1rem;
+            font-size: 1rem;
+            margin-left: 0.7rem;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            transition: background 0.2s, color 0.2s;
+        }
+        .copy-btn:hover {
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%);
+            color: #222;
+        }
+        .table-card {
+            background: rgba(25, 50, 70, 0.92);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px 0 rgba(31,38,135,0.13);
+            margin-top: 2rem;
+            padding: 2rem 1.2rem 1.2rem 1.2rem;
+            border: 1.5px solid rgba(56,239,125,0.10);
+        }
+        .table-responsive {
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .table {
+            border-collapse: collapse;
+            background: transparent;
+            margin-bottom: 0;
+        }
+        .table thead th {
+            color: #38ef7d;
+            border-bottom: 2px solid #38ef7d;
+            font-size: 1.1rem;
+            background: transparent;
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+        }
+        .table tbody tr {
+            background: transparent;
+            color: #e0f7fa;
+            border-bottom: 1px solid rgba(56,239,125,0.10);
+            transition: background 0.2s;
+        }
+        .table tbody tr:hover {
+            background: rgba(56,239,125,0.07);
+        }
+        .table tbody td {
+            vertical-align: middle;
+            border: none;
+            background: transparent;
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+        }
+        .btn-info, .btn-danger {
+            border-radius: 12px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+        }
+        .btn-info {
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%);
+            color: #222;
+            border: none;
+        }
+        .btn-info:hover {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+            color: #fff;
+            border: none;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(90deg, #f09819 0%, #ff5858 100%);
+            color: #fff;
+        }
+        .short-url-box strong, .table-card h2, .main-card h1 {
+            color: #b2ffec;
+        }
+        @media (max-width: 768px) {
+            .main-card, .table-card {
+                padding: 1.2rem 0.5rem;
+            }
+            .shorten-form .form-control, .shorten-form .btn-primary {
+                font-size: 1rem;
+                padding: 0.8rem 0.7rem;
+            }
+            .short-url-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.7rem;
+            }
+        }
+        .action-btns {
+            display: flex;
+            gap: 0.7rem;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .circle-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            border: none;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            padding: 0;
+        }
+        .circle-btn.analytics {
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%);
+            color: #222;
+        }
+        .circle-btn.analytics:hover {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(56,239,125,0.13);
+        }
+        .circle-btn.delete {
+            background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+            color: #fff;
+        }
+        .circle-btn.delete:hover {
+            background: linear-gradient(90deg, #f09819 0%, #ff5858 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(255,88,88,0.13);
+        }
+        .table td.original-url-cell {
+            max-width: 320px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #38ef7d !important;
+        }
+        .table td.clicks-cell, .table td.created-cell {
+            color: #38ef7d !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(15,32,39,0.95); box-shadow: 0 2px 8px rgba(44,83,100,0.12);">
+        <div class="container">
+            <span class="navbar-brand vitekurl-logo">vitekurl</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/">Главная</a></li>
+                    <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link" href="/login">Вход</a></li>
+                    <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link" href="/register">Регистрация</a></li>
+                    <li sec:authorize="isAuthenticated()" class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link">Выйти</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-card mx-auto" style="max-width: 600px;">
+            <h1 class="text-center mb-4" style="font-weight: 700; letter-spacing: 1px;">Сократить длинную ссылку</h1>
+            <form th:action="@{/}" th:object="${urlDto}" method="post" class="shorten-form d-flex mb-2">
+                <input type="url" th:field="*{originalUrl}" class="form-control flex-grow-1" placeholder="Введите вашу длинную ссылку" required>
+                <button class="btn btn-primary" type="submit"><i class="bi bi-link-45deg"></i> Сократить</button>
+            </form>
+            <div th:if="${error}" class="alert alert-danger mt-2" role="alert" th:text="${error}"></div>
+            <div th:if="${shortUrl}" class="short-url-box mt-3">
+                <div>
+                    <strong>Короткая ссылка:</strong>
+                    <a th:href="${shortUrl.shortUrl}" th:text="${shortUrl.shortUrl}" target="_blank"></a>
+                </div>
+                <button class="copy-btn" th:data-clipboard-text="${shortUrl.shortUrl}"><i class="bi bi-clipboard"></i> Копировать</button>
+            </div>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" th:if="${urls}" class="table-card mx-auto" style="max-width: 900px;">
+            <h2 class="mb-3" style="font-weight: 600;">Мои ссылки</h2>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Короткая ссылка</th>
+                            <th>Оригинальная ссылка</th>
+                            <th>Переходы</th>
+                            <th>Создана</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="url : ${urls}">
+                            <td><a th:href="${url.shortUrl}" th:text="${url.shortUrl}" target="_blank"></a></td>
+                            <td class="original-url-cell" th:title="${url.originalUrl}"><span th:text="${url.originalUrl}"></span></td>
+                            <td class="clicks-cell" th:text="${url.clickCount}"></td>
+                            <td class="created-cell" th:text="${#temporals.format(url.createdAt, 'yyyy-MM-dd')}"></td>
+                            <td>
+                                <div class="action-btns">
+                                    <a th:href="@{/analytics/url/{id}(id=${url.id})}" class="circle-btn analytics" title="Аналитика">
+                                        <i class="bi bi-graph-up"></i>
+                                    </a>
+                                    <form th:action="@{/urls/{id}(id=${url.id})}" method="post" style="display:inline;" class="delete-form">
+                                        <input type="hidden" name="_method" value="DELETE"/>
+                                        <button type="submit" class="circle-btn delete" title="Удалить">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize clipboard.js
+            new ClipboardJS('.copy-btn');
+            // Add click event for copy button
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+            // Handle URL deletion (confirm only)
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm('Are you sure you want to delete this URL?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

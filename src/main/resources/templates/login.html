@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - URL Shortener</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+            color: #fff;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .login-outer {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 7vh;
+        }
+        nav.navbar {
+            width: 100vw;
+            min-width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            max-width: 420px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .card {
+            background: rgba(25, 50, 70, 0.92);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px 0 rgba(31,38,135,0.13);
+            border: 1.5px solid rgba(56,239,125,0.10);
+        }
+        .card-footer {
+            background: transparent;
+            color: #b2ffec;
+        }
+        .form-label {
+            color: #b2ffec;
+            font-weight: 500;
+        }
+        .form-control {
+            border-radius: 12px;
+            border: none;
+            background: rgba(25, 50, 70, 0.92);
+            color: #e0f7fa;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            font-size: 1.1rem;
+            padding: 0.8rem 0.8rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .form-control:focus {
+            background: rgba(30, 60, 90, 0.98);
+            color: #fff;
+        }
+        .form-control::placeholder {
+            color: #b2c9d6;
+            opacity: 1;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 8px rgba(44,83,100,0.10);
+            transition: background 0.2s, color 0.2s;
+            padding: 0.8rem 1.3rem;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%);
+            color: #222;
+        }
+        .alert {
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .navbar-brand {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff !important;
+            text-shadow: 0 2px 8px rgba(44,83,100,0.2);
+        }
+        .nav-link {
+            color: #b2ffec !important;
+        }
+        .nav-link.active, .nav-link:focus {
+            color: #38ef7d !important;
+        }
+        .vitekurl-logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(44,83,100,0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(15,32,39,0.95); box-shadow: 0 2px 8px rgba(44,83,100,0.12);">
+        <div class="container">
+            <span class="navbar-brand vitekurl-logo">vitekurl</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/login">Вход</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/register">Регистрация</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="login-outer">
+        <div class="container py-4">
+            <div class="login-container">
+                <div class="text-center mb-4" style="margin-top: 32px;">
+                    <h1 class="h3" style="font-weight: 700; letter-spacing: 1px; color: #b2ffec;">Вход в аккаунт</h1>
+                    <p class="text-muted" style="color: #b2ffec !important;">Доступ к вашим коротким ссылкам и аналитике</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Неверное имя пользователя или пароль.
+                        </div>
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            Вы вышли из аккаунта.
+                        </div>
+                        
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Имя пользователя</label>
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Введите имя пользователя" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Пароль</label>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Введите пароль" required>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Войти</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center py-3">
+                        <p class="mb-0">Нет аккаунта? <a href="/register" style="color: #38ef7d;">Зарегистрироваться</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
