@@ -32,7 +32,7 @@ server:
   port: 8080
 
 url-shortener:
-  base-url: http://localhost:8080/
+  base-url: http://5.187.7.225:8080/
   cache:
     ttl-hours: 24
   security:

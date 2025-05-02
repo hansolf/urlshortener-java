@@ -19,14 +19,14 @@ services:
       - SPRING_RABBITMQ_PORT=5672
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
-      - URL_SHORTENER_BASE_URL=http://localhost:8080/
+      - URL_SHORTENER_BASE_URL=http://5.187.7.225:8080/
       - JWT_SECRET=my_super_secure_jwt_secret_key_at_least_32_chars
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
     restart: unless-stopped
     networks:
       - url-shortener-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://5.187.7.225:8080/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
