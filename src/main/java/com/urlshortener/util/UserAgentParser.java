@@ -44,7 +44,7 @@ public class UserAgentParser {
         COUNTRY_NAMES.put("US", "United States");
         COUNTRY_NAMES.put("GB", "United Kingdom");
         COUNTRY_NAMES.put("CA", "Canada");
-        COUNTRY_NAMES.put("DE", "Germany");
+        COUNTRY_NAMES.put("DE", "Германия");
         COUNTRY_NAMES.put("FR", "France");
         COUNTRY_NAMES.put("JP", "Japan");
         COUNTRY_NAMES.put("CN", "China");
@@ -114,6 +114,15 @@ public class UserAgentParser {
                         if ("success".equals(obj.optString("status"))) {
                             countryCode = obj.optString("countryCode", "ZZ");
                             cityName = obj.optString("city", "Unknown");
+                            // Если ip-api отдаёт название страны, используем его напрямую
+                            String countryName = obj.optString("country", null);
+                            if (countryName != null && !countryName.isEmpty()) {
+                                result.put("country", countryName);
+                            } else {
+                                result.put("country", getCountryName(countryCode));
+                            }
+                        } else {
+                            result.put("country", getCountryName(countryCode));
                         }
                     }
                 } catch (Exception e) {
@@ -122,7 +131,6 @@ public class UserAgentParser {
             }
             result.put("browser", browser);
             result.put("platform", platform);
-            result.put("country", countryCode);
             result.put("city", cityName);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error parsing user agent: " + userAgent, e);

@@ -19,16 +19,19 @@ public class RedirectController {
     public RedirectView redirectToOriginalUrl(@PathVariable String shortCode, HttpServletRequest request) {
         try {
             String originalUrl = urlService.getOriginalUrl(shortCode);
-            
-            // Record analytics asynchronously
-            String ipAddress = request.getRemoteAddr();
+
+            String ipAddress = request.getHeader("X-Forwarded-For");
+            if (ipAddress != null && ipAddress.contains(",")) {
+                ipAddress = ipAddress.split(",")[0].trim();
+            }
+            if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+                ipAddress = request.getRemoteAddr();
+            }
             String userAgent = request.getHeader("User-Agent");
             String referrer = request.getHeader("Referer");
-            
-            // Log the click data
+
             System.out.println("Redirect: " + shortCode + " IP: " + ipAddress + " UA: " + userAgent + " Ref: " + referrer);
-            
-            // Record the click
+
             urlService.recordClick(shortCode, ipAddress, userAgent, referrer);
             
             RedirectView redirectView = new RedirectView();
@@ -36,11 +39,9 @@ public class RedirectController {
             redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
             return redirectView;
         } catch (Exception e) {
-            // Log the error
             System.err.println("Error redirecting: " + e.getMessage());
             e.printStackTrace();
-            
-            // If the URL is not found, redirect to the home page or an error page
+
             RedirectView redirectView = new RedirectView();
             redirectView.setUrl("/not-found");
             return redirectView;

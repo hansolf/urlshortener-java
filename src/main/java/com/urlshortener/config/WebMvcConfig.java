@@ -10,7 +10,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // Добавляем только те маппинги, которых нет в контроллерах
+
         registry.addViewController("/not-found").setViewName("not-found");
     }
     

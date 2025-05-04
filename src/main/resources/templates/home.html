@@ -106,12 +106,13 @@
         }
         .table-responsive {
             border-radius: 14px;
-            overflow: hidden;
+            overflow-x: auto;
         }
         .table {
             border-collapse: collapse;
             background: transparent;
             margin-bottom: 0;
+            min-width: 700px;
         }
         .table thead th {
             color: #38ef7d;
@@ -176,6 +177,9 @@
                 align-items: flex-start;
                 gap: 0.7rem;
             }
+            .table {
+                min-width: 600px;
+            }
         }
         .action-btns {
             display: flex;
@@ -222,6 +226,28 @@
             color: #38ef7d !important;
         }
         .table td.clicks-cell, .table td.created-cell {
+            color: #38ef7d !important;
+        }
+        .table-responsive::-webkit-scrollbar {
+            height: 8px;
+            background: #1a2a38;
+            border-radius: 8px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #38ef7d;
+            border-radius: 8px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #11998e;
+        }
+        .table-responsive {
+            scrollbar-color: #38ef7d #1a2a38;
+            scrollbar-width: thin;
+        }
+        .nav-link {
+            color: #b2ffec !important;
+        }
+        .nav-link.active, .nav-link:focus {
             color: #38ef7d !important;
         }
     </style>

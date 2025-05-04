@@ -1,8 +1,5 @@
 package com.urlshortener.service;
 
-/**
- * Service for recording click metrics to Prometheus
- */
 public interface ClickMetricsService {
     
     /**

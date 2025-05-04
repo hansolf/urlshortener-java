@@ -53,7 +53,6 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    // Конфигурация для API запросов (JWT)
     @Bean
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
