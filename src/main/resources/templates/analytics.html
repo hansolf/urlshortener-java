@@ -204,9 +204,7 @@
                             <ul class="list-group list-group-flush">
                                 <li th:each="item : ${analytics.clicksByCountry}" 
                                     class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span th:with="countryCode=${item['country'] != null ? item['country'] : 'ZZ'}">
-                                        <span th:text="${T(com.urlshortener.util.UserAgentParser).getCountryName(countryCode)}"></span>
-                                    </span>
+                                    <span th:text="${item['country']}"></span>
                                     <span class="badge bg-primary rounded-pill" th:text="${item['count']}"></span>
                                 </li>
                             </ul>
