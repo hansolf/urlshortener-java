@@ -70,15 +70,15 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
-            // Invalid JWT signature
+
         } catch (MalformedJwtException ex) {
-            // Invalid JWT token
+
         } catch (ExpiredJwtException ex) {
-            // Expired JWT token
+
         } catch (UnsupportedJwtException ex) {
-            // Unsupported JWT token
+
         } catch (IllegalArgumentException ex) {
-            // JWT claims string is empty
+
         }
         return false;
     }

@@ -17,7 +17,7 @@ public class PublicUrlController {
 
     @PostMapping("/shorten")
     public ResponseEntity<ApiResponse<UrlDto>> createShortUrl(@Valid @RequestBody UrlDto urlDto) {
-        // For public URLs, we don't associate with a user
+
         UrlDto createdUrl = urlService.shortenUrl(urlDto.getOriginalUrl(), null);
         return ResponseEntity.ok(ApiResponse.success("URL shortened successfully", createdUrl));
     }

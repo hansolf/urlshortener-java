@@ -114,12 +114,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<Map<String, Object>> clicksByPlatform = analyticsRepository.getClicksByPlatformForUrl(url);
         List<Map<String, Object>> clicksByReferrer = analyticsRepository.getClicksByReferrerForUrl(url);
         
-        // For development/demo purposes, generate sample data if real data is missing
-        if (totalClicks == 0) {
-            logger.info("Generating sample analytics data for URL ID: " + url.getId());
-            return generateSampleAnalyticsData(url);
-        }
-        
         // If we have clicks but charts are empty, enhance with sample data
         if (totalClicks > 0) {
             if (clicksPerDay.isEmpty()) {

@@ -30,7 +30,7 @@ public class UrlController {
     public ResponseEntity<ApiResponse<UrlDto>> createShortUrl(@Valid @RequestBody UrlDto urlDto) {
         User user = getCurrentUser();
         UrlDto createdUrl = urlService.shortenUrl(urlDto.getOriginalUrl(), user);
-        return ResponseEntity.ok(ApiResponse.success("URL shortened successfully", createdUrl));
+        return ResponseEntity.ok(ApiResponse.success("URL shortened успех", createdUrl));
     }
 
     @GetMapping
@@ -53,13 +53,13 @@ public class UrlController {
     public ResponseEntity<ApiResponse<Void>> deleteUrl(@PathVariable Long id) {
         User user = getCurrentUser();
         urlService.deleteUrl(id, user);
-        return ResponseEntity.ok(ApiResponse.success("URL deleted successfully", null));
+        return ResponseEntity.ok(ApiResponse.success("URL удален успешно", null));
     }
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException("Current user not found"));
+                .orElseThrow(() -> new IllegalStateException("удален пользователь"));
     }
 } 
